@@ -16,6 +16,7 @@ import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
 import { EmailVerifying } from "./pages/ActivationPage";
 import { BetaBanner } from "./components/BetaBanner";
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
 
   return (
     <>
+      <SpeedInsights />
       <Toaster
         position="bottom-left"
         reverseOrder={false}
