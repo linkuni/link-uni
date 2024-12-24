@@ -3,7 +3,6 @@ import OnboardingPage from "../pages/Onboarding";
 import { SessionError } from "../pages/SessionError";
 import { useSessionCheck } from "../hooks/useSessionCheck";
 import ErrorBoundary from "../components/ErrorBoundary.js";
-import { toast } from "react-hot-toast";
 
 
 
@@ -12,7 +11,6 @@ export const ProtectedRoute = () => {
     const { isAuthenticated, isValidUser, currentUser } = useSessionCheck();
     // Using a more structured approach with early returns
     if (!isAuthenticated || !isValidUser) {
-        toast.error('Please login to continue');
         return <Navigate to="/login" />;
     }
 
