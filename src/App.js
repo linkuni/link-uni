@@ -17,7 +17,6 @@ import { ResetPassword } from "./pages/ResetPassword";
 import { EmailVerifying } from "./pages/ActivationPage";
 import { BetaBanner } from "./components/BetaBanner";
 import { SpeedInsights } from '@vercel/speed-insights/react';
-import PDFViewer from "./components/PDFViewer";
 
 
 function App() {
@@ -44,7 +43,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route element={<ProtectedRoute />} >
-            <Route path="/" element={<PDFViewer url="1R_3KrpQCGlbRjP2XLiNTXUCgO3TimiY7" />} />
+            <Route path="/" element={<Home />} />
             <Route path="/my-profile" element={<Profile />} />
             <Route path="/notes" element={<Notes />} />
             <Route path="/dossier" element={<Dossier />} />
