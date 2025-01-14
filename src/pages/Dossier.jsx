@@ -11,12 +11,15 @@ import { updatePostLikes } from "../redux/posts/postSlice"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "../components/ui/alert-dialog"
+import PDFViewer from "../components/PDFViewer"
 export default function Dossier() {
   const navigate = useNavigate();
   const [postId, setPostId] = useState('');
   const [saved, setSaved] = useState(false);
   const [liked, setLiked] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [isPreviewing, setIsPreviewing] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -123,6 +126,22 @@ export default function Dossier() {
       }
     );
   };
+
+  const handleFilePreview = async () => {
+    try{
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/posts/preview/${post?._id}`, {
+        credentials: 'include',
+      });
+      if(!response.ok){
+        return toast.error('Failed to preview file');
+      }
+      const data = await response.json();
+      setPreviewUrl(data.signedUrl);
+      setIsPreviewing(true);
+    }catch(e){
+      return toast.error(e.message);
+    }
+  }
   
   
 
@@ -165,6 +184,10 @@ export default function Dossier() {
       setLoading(false);
       return toast.error(err.message);
     }
+  }
+
+  if(isPreviewing){
+    return <PDFViewer url={previewUrl} />
   }
 
   return (
@@ -219,6 +242,9 @@ export default function Dossier() {
               <div className="flex justify-between items-center">
                 <Button size="sm" onClick={handleFileDownload} >
                   Download
+                </Button>
+                <Button size="sm" onClick={handleFilePreview} >
+                  Preview
                 </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
