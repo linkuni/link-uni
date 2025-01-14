@@ -18,17 +18,17 @@ export const ProtectedRoute = () => {
     switch (currentUser.isOnboarded) {
         case false:
             return (
-                <ErrorBoundary fallback={<SessionError error={`currentUser.isOnboarded=false`} />}>
+                <ErrorBoundary fallback={<SessionError />}>
                     <OnboardingPage />
                 </ErrorBoundary>
             );
         case true:
             return (
-                <ErrorBoundary fallback={<SessionError error={`currentUser.isOnboarded=true`} />}>
+                <ErrorBoundary fallback={<SessionError />}>
                     <Outlet />
                 </ErrorBoundary>
             );
         default:
-            return <SessionError error={`default`} />;
+            return <SessionError />;
     }
 };
