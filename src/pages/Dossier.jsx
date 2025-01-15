@@ -11,7 +11,7 @@ import { updatePostLikes } from "../redux/posts/postSlice"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "../components/ui/alert-dialog"
-import PDFViewer from "../components/PDFViewer"
+import PDFViewer from "../components/Preview/PDFViewer"
 export default function Dossier() {
   const navigate = useNavigate();
   const [postId, setPostId] = useState('');
@@ -240,12 +240,13 @@ export default function Dossier() {
           <div className="bg-card text-card-foreground border-2 rounded-lg shadow-sm mb-6">
             <div className="p-4 border-b">
               <div className="flex justify-between items-center">
-                <Button size="sm" onClick={handleFileDownload} >
+                <Button size="sm" className="px-4 py-2 rounded-lg transition-colors duration-200 border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white bg-transperant" onClick={handleFileDownload} >
                   Download
                 </Button>
-                <Button size="sm" onClick={handleFilePreview} >
+                {post && post.fileType==="application/pdf" && 
+                <Button size="sm" className="bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/50 hover:shadow-blue-600/50 transition-shadow duration-300 px-4 py-2 rounded-lg" onClick={handleFilePreview} >
                   Preview
-                </Button>
+                </Button>}
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="destructive" size="sm" disabled={loading}>
@@ -276,7 +277,7 @@ export default function Dossier() {
                   <span>Description.md</span>
                 </div>
               </div> */}
-              <div className="flex items-center justify-between py-2 hover:bg-muted rounded px-2">
+              <div className="flex items-center justify-between py-2 hover:bg-muted rounded px-2 cursor-pointer">
                 <div className="flex items-center">
                   <FileIcon className="mr-2 h-4 w-4 text-muted-foreground" />
                   <span>{post?.fileName}</span>

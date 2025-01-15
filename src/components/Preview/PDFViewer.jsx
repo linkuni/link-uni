@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
+import Navbar from './Navbar';
 
 // Set worker source path to public folder
 // pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -15,6 +16,7 @@ const PDFViewer = ({url}) => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [pageWidth, setPageWidth] = useState(0);
+  const [scale, setScale] = useState(1);
 
     // Go to next page
     function goToNextPage() {
@@ -49,8 +51,28 @@ const PDFViewer = ({url}) => {
     standardFontDataUrl: "standard_fonts/",
   };
 
-  return (
+  const zoomIn = () => {
+    setScale((prevScale) => Math.min(prevScale + 0.1, 2.0)); // Max zoom 200%
+  };
 
+  const zoomOut = () => {
+    setScale((prevScale) => Math.max(prevScale - 0.1, 0.5)); // Min zoom 50%
+  };
+
+  const resetZoom = () => {
+    setScale(1);
+  };
+
+  return (
+<>
+    <Navbar 
+    numPages={numPages} 
+    pageNumber={pageNumber}
+    onZoomIn={zoomIn}
+    onZoomOut={zoomOut}
+    onResetZoom={resetZoom}
+    postId={postId}
+     />
         <div
         hidden={isLoading}
         style={{ height: "calc(100vh - 64px)" }}
@@ -93,11 +115,12 @@ const PDFViewer = ({url}) => {
               renderTextLayer={false}
               onLoadSuccess={onPageLoadSuccess}
               onRenderError={() => setIsLoading(false)}
-              width={Math.max(pageWidth * 0.8, 390)}
+              width={Math.max(pageWidth * 0.8, 390)*scale}
             />
           </Document>
         </div>
       </div>
+</>
 
   );
 };
