@@ -71,7 +71,6 @@ const PDFViewer = ({url}) => {
     onZoomIn={zoomIn}
     onZoomOut={zoomOut}
     onResetZoom={resetZoom}
-    postId={postId}
      />
         <div
         hidden={isLoading}
