@@ -4,10 +4,22 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import Navbar from './Navbar';
+import { ErrorBoundary } from "react-error-boundary"
 
 // Set worker source path to public folder
 // pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+
+function fallbackRender({ error, resetErrorBoundary }) {
+  // Call resetErrorBoundary() to reset the error boundary and retry the render.
+
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre style={{ color: "red" }}>{error.message}</pre>
+    </div>
+  );
+}
 
 
 const PDFViewer = ({url}) => {
@@ -65,6 +77,7 @@ const PDFViewer = ({url}) => {
 
   return (
 <>
+<ErrorBoundary FallbackComponent={fallbackRender}>
     <Navbar 
     numPages={numPages} 
     pageNumber={pageNumber}
@@ -119,6 +132,7 @@ const PDFViewer = ({url}) => {
           </Document>
         </div>
       </div>
+      </ErrorBoundary>
 </>
 
   );
