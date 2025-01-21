@@ -7,15 +7,20 @@ import Navbar from "./Navbar"
 import { ErrorBoundary } from "react-error-boundary"
 import Lottie from "lottie-react"
 import loadingAnimation from "./loading.json"
+import { Button } from "../ui/button"
 
 pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs"
 
 function fallbackRender({ error, resetErrorBoundary }) {
   return (
-    <div role="alert">
-      <p>
-        Something went wrong: <span className="text-red-500">PDF render failed</span>
+    <div role="alert" className="min-h-screen flex justify-center items-center flex-col gap-10 ">
+      <p className="text-red-500 text-center">
+        PDF render failed
       </p>
+
+        <Button variant="outline" className="w-32" onClick={resetErrorBoundary}>Try again</Button>
+
+
     </div>
   )
 }
@@ -97,15 +102,6 @@ const PDFViewer = ({ url }) => {
           className="relative overflow-x-auto"
           ref={scrollContainerRef}
         >
-          <div className="flex items-center">
-            <button
-              onClick={goToPreviousPage}
-              disabled={pageNumber <= 1}
-              className="sticky left-0 z-10 h-[calc(100vh - 64px)] px-2 py-24 text-gray-400 hover:text-gray-50 focus:z-20"
-            >
-              <span className="sr-only">Previous</span>
-              <ChevronLeftIcon className="h-10 w-10" aria-hidden="true" />
-            </button>
             <div className="flex h-full justify-center mx-auto">
               <Document file={url} onLoadSuccess={onDocumentLoadSuccess} options={options} renderMode="canvas" className="">
                 {Array.from(new Array(numPages), (el, index) => (
@@ -122,15 +118,6 @@ const PDFViewer = ({ url }) => {
                 ))}
               </Document>
             </div>
-            <button
-              onClick={goToNextPage}
-              disabled={pageNumber >= numPages}
-              className="sticky right-0 z-10 h-[calc(100vh - 64px)] px-2 py-24 text-gray-400 hover:text-gray-50 focus:z-20"
-            >
-              <span className="sr-only">Next</span>
-              <ChevronRightIcon className="h-10 w-10" aria-hidden="true" />
-            </button>
-          </div>
         </div>
         {
           isLoading && (
