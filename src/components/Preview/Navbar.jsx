@@ -40,9 +40,9 @@ export default function Navbar({numPages, pageNumber, onZoomIn, onZoomOut}) {
           <span className="sr-only">Zoom in</span>
         </Button>
         <div className="flex items-center gap-1 px-3 text-sm text-white">
-          <span>{pageNumber}</span>
-          <span>/</span>
-          <span>{numPages}</span>
+          {/* <span>{pageNumber}</span> */}
+          {/* <span>/</span> */}
+          <span>{numPages} Pages</span>
         </div>
         <Button
           variant="ghost"
