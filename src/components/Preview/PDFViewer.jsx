@@ -15,8 +15,7 @@ function fallbackRender({ error, resetErrorBoundary }) {
 
   return (
     <div role="alert">
-      <p>Something went wrong:</p>
-      <pre style={{ color: "red" }}>{error.message}</pre>
+      <p>Something went wrong: <span className='text-red-500'>PDF render failed</span></p>
     </div>
   );
 }
