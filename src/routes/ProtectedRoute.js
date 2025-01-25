@@ -2,7 +2,7 @@ import { Outlet, Navigate } from "react-router-dom";
 import OnboardingPage from "../pages/Onboarding";
 import { SessionError } from "../pages/SessionError";
 import { useSessionCheck } from "../hooks/useSessionCheck";
-import ErrorBoundary from "../components/ErrorBoundary.js";
+import { ErrorBoundary } from "react-error-boundary"
 
 
 

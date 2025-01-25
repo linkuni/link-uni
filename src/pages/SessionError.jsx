@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-export const SessionError = ({error}) => {
+export const SessionError = ({error, resetErrorBoundary}) => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -37,12 +37,13 @@ export const SessionError = ({error}) => {
     return (
         <div className="flex flex-col justify-center items-center h-screen w-full gap-y-5">
             <h1 className="font-bold text-3xl">Something Went Wrong...</h1>
-            <h1 className="text-2xl"> We encountered an error with your session.Please try logging in again.</h1>
+            <Button variant="outline" className='w-ful justify-start gap-2 text-sm font-medium bg-muted hover:bg-slate-700' onClick={resetErrorBoundary}>Try again</Button>
+            <h1 className="text-2xl mt-20"> Not working? Please try logging in again.</h1>
             <div className=''>
               <Button
-                variant='ghost'
+                variant='outline'
                 onClick={handleLogout}
-                className='w-ful justify-start gap-2 text-sm font-medium bg-muted hover:bg-slate-700'
+                className='justify-start gap-2 text-sm font-medium'
               >
                 <LogOutIcon className='h-5 w-5' />
                 Logout
