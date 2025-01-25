@@ -8,10 +8,14 @@ export default function Notes() {
   const currentPosts = useSelector((state) => state.posts.posts);
   const status = useSelector((state) => state.posts.status);
   const currentUser = useSelector((state) => state.user.currentUser);
+  let filteredPosts;
+
+  if(currentPosts.length > 0 ){
+    filteredPosts = currentPosts.filter(post => 
+      !currentUser.blacklistedPosts?.includes(post._id)
+    );
+  }
   
-  const filteredPosts = currentPosts.filter(post => 
-    !currentUser.blacklistedPosts?.includes(post._id)
-  );
   
 
   return (

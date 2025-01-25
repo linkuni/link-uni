@@ -14,6 +14,10 @@ export const SessionError = ({error, resetErrorBoundary}) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const handleReload = () => {
+        window.location.reload();
+    }
+
     const handleLogout = async () => {
         try {
           const response = await fetch(`${process.env.REACT_APP_BASE_URL}/api/v1/user/logout`, {
@@ -37,7 +41,7 @@ export const SessionError = ({error, resetErrorBoundary}) => {
     return (
         <div className="flex flex-col justify-center items-center h-screen w-full gap-y-5">
             <h1 className="font-bold text-3xl">Something Went Wrong...</h1>
-            <Button variant="outline" className='w-ful justify-start gap-2 text-sm font-medium bg-muted hover:bg-slate-700' onClick={resetErrorBoundary}>Try again</Button>
+            <Button variant="outline" className='w-ful justify-start gap-2 text-sm font-medium bg-muted hover:bg-slate-700' onClick={handleReload}>Reload</Button>
             <h1 className="text-2xl mt-20"> Not working? Please try logging in again.</h1>
             <div className=''>
               <Button

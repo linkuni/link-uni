@@ -1,47 +1,10 @@
 import Lottie from "lottie-react";
 import animationData from "./animationData.json";
 import { motion } from "framer-motion";
-import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import LoadingCard from "../components/LoadingCard";
-import PostCard from "../components/PostCard";
 import Features from "../components/Features";
 
 
 export default function Home() {
-  const currentPosts = useSelector((state) => state.posts.posts);
-  const currentUser = useSelector((state) => state.user.currentUser);
-  const [topThreeRecent, setTopThreeRecent] = useState([]);
-  const [topThreePopular, setTopThreePopular] = useState([]);
-  const status = useSelector((state) => state.posts.status);
-  const filteredPosts = currentPosts?.filter(post => 
-    !currentUser.blacklistedPosts?.includes(post._id)
-  );
-
-  useEffect(() => {
-    if (currentPosts) {
-      const posts = currentPosts.map((post) => {
-        return {
-          _id: post._id,
-          createdAt: post.createdAt,
-        };
-      });
-
-      const sortedPosts = posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      const topThree1 = filteredPosts.filter((post) => {
-        return sortedPosts.slice(0, 3).some((sortedPost) => sortedPost._id === post._id);
-      });
-
-      const popularPosts = posts.sort((a, b) => b.likes?.length - a.likes?.length);
-      const topThree2 = filteredPosts.filter((post) => {
-        return popularPosts.slice(0, 3).some((sortedPost) => sortedPost._id === post._id);
-      });
-
-  setTopThreeRecent(topThree1);
-  setTopThreePopular(topThree2);
-}
-  }, [currentPosts]);
-
 
   const containerVariants = {
     hidden: { opacity: 0 },
