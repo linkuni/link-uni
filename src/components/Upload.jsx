@@ -38,6 +38,7 @@ export default function Upload() {
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
+
   const [resourceType, setResourceType] = useState("");
   const [formValues, setFormValues] = useState({
     title: "",
@@ -130,8 +131,13 @@ export default function Upload() {
             resourceType: "",
           }
         });
+        setTitle("");  
+        setDesc("");   
+        setSelectedProgram(""); 
+        setSelectedCourse(""); 
         setFile(null);
         setUploadProgress(0);
+
   
         return data.message; // Return success message to show success toast
       })(),
@@ -201,6 +207,31 @@ export default function Upload() {
   useEffect(() => {
     formValues.desc = desc;
   }, [desc]);
+
+  const handleClearForm = () => {
+
+    setFormValues({
+      title: "",
+      desc: "",
+      fileType: "",
+      fileName: "",
+      fileUrl: "",
+      category: {
+        program: "",
+        semester: "",
+        course: "",
+        resourceType: "",
+      }
+    });
+    
+
+    setTitle("");  
+    setDesc("");   
+    setSelectedProgram(""); 
+    setSelectedCourse(""); 
+    setFile(null);
+    setUploadProgress(0);
+  }
 
   return (
     <Dialog defaultClose>
@@ -360,8 +391,10 @@ export default function Upload() {
             </div>
           </div>
           <Button type="submit">Confirm</Button>
-          <Button variant="outline" onClick={() => {}}>Clear All</Button>
         </form>
+          <Button variant="outline" onClick={handleClearForm}>
+            Clear All
+          </Button>
       </DialogContent>
     </Dialog>
   );
