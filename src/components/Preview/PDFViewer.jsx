@@ -17,10 +17,7 @@ function fallbackRender({ error, resetErrorBoundary }) {
       <p className="text-red-500 text-center">
         PDF render failed
       </p>
-
-        <Button variant="outline" className="w-32" onClick={resetErrorBoundary}>Try again</Button>
-
-
+      <Button variant="outline" className="w-32" onClick={resetErrorBoundary}>Try again</Button>
     </div>
   )
 }
@@ -31,13 +28,22 @@ const PDFViewer = ({ url }) => {
   const [error, setError] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [pageWidth, setPageWidth] = useState(0)
+  const [pageHeight, setPageHeight] = useState(0)
   const [scale, setScale] = useState(1)
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
   const scrollContainerRef = useRef(null)
 
   useEffect(() => {
     const handleResize = () => {
+      const smallScreen = window.innerWidth <= 640
+      setIsSmallScreen(smallScreen)
+      setPageHeight(window.innerHeight)
       setPageWidth(window.innerWidth)
     }
+    
+    // Initial check
+    handleResize()
+    
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [])
@@ -60,6 +66,7 @@ const PDFViewer = ({ url }) => {
 
   function onPageLoadSuccess() {
     setPageWidth(window.innerWidth)
+    setPageHeight(window.innerHeight)
     setIsLoading(false)
   }
 
@@ -84,6 +91,23 @@ const PDFViewer = ({ url }) => {
 
   const resetZoom = () => {
     setScale(1)
+  }
+
+  // Calculate dimensions based on screen size
+  const getPageDimensions = () => {
+    if (!isSmallScreen) {
+
+      return {
+        width: undefined,
+        height: pageHeight * scale * 0.8
+      }
+    } else {
+
+      return {
+        width: Math.max(pageWidth * 0.8, 390) * scale,
+        height: undefined
+      }
+    }
   }
 
   return (
@@ -112,28 +136,25 @@ const PDFViewer = ({ url }) => {
                     renderTextLayer={false}
                     onLoadSuccess={onPageLoadSuccess}
                     onRenderError={() => setIsLoading(false)}
-                    width={Math.max(pageWidth * 0.8, 390) * scale}
+                    {...getPageDimensions()}
                     className="mx-2"
                   />
                 ))}
               </Document>
             </div>
         </div>
-        {
-          isLoading && (
-            <div className="flex items-center justify-center h-screen">
-              <Lottie
-                animationData={loadingAnimation}
-                className="flex justify-center items-center h-1/2"
-                loop={true}
-              />
-            </div>
-          )
-        }
+        {isLoading && (
+          <div className="flex items-center justify-center h-screen">
+            <Lottie
+              animationData={loadingAnimation}
+              className="flex justify-center items-center h-1/2"
+              loop={true}
+            />
+          </div>
+        )}
       </ErrorBoundary>
     </>
   )
 }
 
 export default PDFViewer
-

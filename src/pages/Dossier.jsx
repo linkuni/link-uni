@@ -9,7 +9,7 @@ import toast from "react-hot-toast"
 import { updateStart, updateSuccess, updateFailure } from "../redux/user/userSlice"
 import { updatePostLikes } from "../redux/posts/postSlice"
 import { useDispatch } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "../components/ui/alert-dialog"
 import PDFViewer from "../components/Preview/PDFViewer"
 export default function Dossier() {
@@ -191,7 +191,14 @@ export default function Dossier() {
   }
 
   return (
+    <div className="sm:flex">
+    <Link to={"/notes"} className="mt-8 ml-8">
+      <Button variant="outline" className="">
+        back
+      </Button>
+    </Link>
     <div className="container mx-auto xl:px-[300px] lg:px-[200px] md:px-[100px] py-8">
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div className="flex items-center gap-2 mb-4 md:mb-0">
           {
@@ -310,6 +317,7 @@ export default function Dossier() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   )
 }
