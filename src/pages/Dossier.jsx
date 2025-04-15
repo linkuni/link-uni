@@ -59,7 +59,9 @@ export default function Dossier() {
         return toast.error(data.message);
       }
 
-      dispatch(updateSuccess(data.rest));
+      const updatedUser = {...user, savedPosts: data.data.savedPosts};
+    
+      dispatch(updateSuccess(updatedUser));
       setSaved(!saved);
       return toast.success(data.message);
     } catch (err) {
@@ -86,12 +88,12 @@ export default function Dossier() {
       }
       if(res.ok){
         setLiked(!liked);
-        if(data.offset === 1){
-          dispatch(updatePostLikes({postId: post._id, userId: user._id, offset: 1}));
+        if(data.data === 1){
+          dispatch(updatePostLikes({postId: post._id, userId: user.userId, offset: 1}));
           return toast(data.message, {icon: '🥳'});
         }
-        if(data.offset === -1){
-          dispatch(updatePostLikes({postId: post._id, userId: user._id, offset: -1}));
+        if(data.data === -1){
+          dispatch(updatePostLikes({postId: post._id, userId: user.userId, offset: -1}));
           return toast(data.message, {icon: '🥹' });
         }
       }
@@ -136,7 +138,7 @@ export default function Dossier() {
         return toast.error('Failed to preview file');
       }
       const data = await response.json();
-      setPreviewUrl(data.signedUrl);
+      setPreviewUrl(data.data.signedUrl);
       setIsPreviewing(true);
     }catch(e){
       return toast.error(e.message);
@@ -151,7 +153,7 @@ export default function Dossier() {
     } else {
       setSaved(false);
     }
-    if (user && post?.likes.includes(user._id)) {
+    if (user && post?.likes.includes(user.userId)) {
       setLiked(true);
     } else {
       setLiked(false);
