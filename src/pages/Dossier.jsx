@@ -23,10 +23,6 @@ export default function Dossier() {
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState('');
   const [isPreviewing, setIsPreviewing] = useState(false);
-  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("summary");
-  const [summaryData, setSummaryData] = useState(null);
-  const [examData, setExamData] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -195,18 +191,8 @@ export default function Dossier() {
   }
 
   const handleAIInsightsClick = () => {
-    // Check if post has summary or exam data
-    if (post?.summary) {
-      console.log(post.summary[0]);
-      setSummaryData(post.summary[0]);
-    }
-    
-    if (post?.exam) {
-      console.log(post.exam);
-      setExamData(post.exam);
-    }
-    
-    setIsAIModalOpen(true);
+    // Navigate to the AI Insights page
+    navigate(`/ai-insights/${post?._id}`);
   };
 
   if(isPreviewing){
@@ -344,188 +330,6 @@ export default function Dossier() {
         </div>
       </div>
     </div>
-
-    {/* AI Insights Modal */}
-    <Dialog open={isAIModalOpen} onOpenChange={setIsAIModalOpen}>
-      <DialogContent className="w-[90vw] max-w-6xl h-[90vh] max-h-screen flex flex-col">
-        <DialogHeader>
-          <DialogTitle>AI Insights</DialogTitle>
-        </DialogHeader>
-        <DialogDescription>
-          AI Insights for the post
-        </DialogDescription>
-        <Tabs 
-          defaultValue="summary" 
-          value={activeTab} 
-          onValueChange={setActiveTab}
-          className="w-full flex-1 flex flex-col"
-        >
-          <div className="sticky top-0 z-10 bg-background pb-2">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="summary">Summary</TabsTrigger>
-              <TabsTrigger value="exam">Exam Prep</TabsTrigger>
-            </TabsList>
-          </div>
-          
-          <div className="flex-1 overflow-y-auto">
-            <TabsContent value="summary" className="space-y-6 py-4 pr-2 h-full">
-              {post?.processingStatus?.summary === "processing" && (
-                <div className="p-4 border rounded-md">
-                  <div className="flex items-center justify-center space-x-2 py-8">
-                    <div className="h-4 w-4 bg-blue-600 rounded-full animate-pulse"></div>
-                    <div className="h-4 w-4 bg-blue-600 rounded-full animate-pulse delay-75"></div>
-                    <div className="h-4 w-4 bg-blue-600 rounded-full animate-pulse delay-150"></div>
-                    <p className="text-blue-600 font-medium">Processing summary...</p>
-                  </div>
-                </div>
-              )}
-              
-              {post?.processingStatus?.summary === "failed" && (
-                <div className="p-4 border border-red-200 rounded-md">
-                  <div className="flex items-center justify-center py-8">
-                    <svg className="w-6 h-6 text-red-800 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <p className="text-red-800 font-medium">Failed to process summary</p>
-                  </div>
-                </div>
-              )}
-              
-              {summaryData && post?.processingStatus?.summary === "completed" && (
-                <div className="p-4 border rounded-md">
-                  <h3 className="text-lg font-semibold mb-2">{summaryData.title || post?.title}</h3>
-                  
-                  {summaryData.overview && (
-                    <div className="mb-3">
-                      <h4 className="font-medium text-sm text-gray-400">Overview</h4>
-                      <p className="text-sm">{summaryData.overview}</p>
-                    </div>
-                  )}
-                  
-                  {summaryData.mainPoints && summaryData.mainPoints.length > 0 && (
-                    <div className="mb-3">
-                      <h4 className="font-medium text-sm text-gray-400">Main Points</h4>
-                      <ul className="list-disc pl-5 text-sm">
-                        {summaryData.mainPoints.map((point, index) => (
-                          <li key={index}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  
-                  {summaryData.importantTerms && summaryData.importantTerms.length > 0 && (
-                    <div className="mb-3">
-                      <h4 className="font-medium text-sm text-gray-400">Important Terms</h4>
-                      <div className="flex flex-wrap gap-1 text-sm">
-                        {summaryData.importantTerms.map((term, index) => (
-                          <span key={index} className="bg-blue-800 text-white px-2 py-1 rounded-md">{term}</span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {summaryData.benefits && (
-                    <div>
-                      <h4 className="font-medium text-sm text-gray-400">Benefits</h4>
-                      <p className="text-sm">{summaryData.benefits}</p>
-                    </div>
-                  )}
-                  {summaryData.riskOrLimitations && (
-                    <div>
-                      <h4 className="font-medium text-sm text-gray-400">Risk or Limitations</h4>
-                      <p className="text-sm">{summaryData.riskOrLimitations}</p>
-                    </div>
-                  )}
-                  {summaryData.recommendations && (
-                    <div>
-                      <h4 className="font-medium text-sm text-gray-400">Recommendations</h4>
-                      <p className="text-sm">{summaryData.recommendations}</p>
-                    </div>
-                  )}
-                  {summaryData.conclusion && (
-                    <div>
-                      <h4 className="font-medium text-sm text-gray-400">Conclusion</h4>
-                      <p className="text-sm">{summaryData.conclusion}</p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </TabsContent>
-            
-            <TabsContent value="exam" className="space-y-6 py-4 pr-2 h-full">
-              {post?.processingStatus?.examQuestions === "processing" && (
-                <div className="p-4 border rounded-md">
-                  <div className="flex items-center justify-center space-x-2 py-8">
-                    <div className="h-4 w-4 bg-blue-600 rounded-full animate-pulse"></div>
-                    <div className="h-4 w-4 bg-blue-600 rounded-full animate-pulse delay-75"></div>
-                    <div className="h-4 w-4 bg-blue-600 rounded-full animate-pulse delay-150"></div>
-                    <p className="text-blue-600 font-medium">Processing exam questions...</p>
-                  </div>
-                </div>
-              )}
-              
-              {post?.processingStatus?.examQuestions === "failed" && (
-                <div className="p-4 border border-red-200 rounded-md">
-                  <div className="flex items-center justify-center py-8">
-                    <svg className="w-6 h-6 text-red-800 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <p className="text-red-800 font-medium">Failed to process exam questions</p>
-                  </div>
-                </div>
-              )}
-              
-              {examData && post?.processingStatus?.examQuestions === "completed" && (
-                examData.map((exam, index) => (
-                  <div key={index} className="p-4 border rounded-md">
-                    <div className="mb-3">
-                      <h4 className="font-medium">Question {index + 1}</h4>
-                      <p className="text-sm">{exam.question}</p>
-                    </div>
-                    
-                    <div className="mb-3">
-                      <h4 className="font-medium">Answer</h4>
-                      <p className="text-sm">{exam.answer}</p>
-                    </div>
-                    
-                    {exam.keyPoints && exam.keyPoints.length > 0 && (
-                      <div className="mb-3">
-                        <h4 className="font-medium text-sm text-gray-400">Key Points</h4>
-                        <ul className="list-disc pl-5 text-sm">
-                          {exam.keyPoints.map((point, index) => (
-                            <li key={index}>{point}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    
-                    {exam.tips && exam.tips.length > 0 && (
-                      <div>
-                        <h4 className="font-medium text-sm text-gray-400">Tips</h4>
-                        <ul className="list-disc pl-5 text-sm">
-                          {exam.tips.map((tip, index) => (
-                            <li key={index}>{tip}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                ))
-              )}
-            </TabsContent>
-          </div>
-        </Tabs>
-        
-        {/* <div className="mt-4">
-          <Button 
-            className="w-full" 
-            onClick={() => setIsAIModalOpen(false)}
-          >
-            Close
-          </Button>
-        </div> */}
-      </DialogContent>
-    </Dialog>
     </div>
   )
 }

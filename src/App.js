@@ -17,6 +17,7 @@ import { ResetPassword } from "./pages/ResetPassword";
 import { EmailVerifying } from "./pages/ActivationPage";
 import { BetaBanner } from "./components/BetaBanner";
 import { SpeedInsights } from '@vercel/speed-insights/react';
+import AIInsights from "./pages/AIInsights";
 
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
             <Route path="/my-profile" element={<Profile />} />
             <Route path="/notes" element={<Notes />} />
             <Route path="/dossier" element={<Dossier />} />
+            <Route path="/ai-insights/:postId" element={<AIInsights />} />
           </Route>
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
