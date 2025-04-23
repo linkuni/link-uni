@@ -12,11 +12,14 @@ export default function AIInsights() {
   const [activeTab, setActiveTab] = useState("summary");
   const [summaryData, setSummaryData] = useState(null);
   const [examData, setExamData] = useState(null);
+  const [pyqData, setPyqData] = useState(null);
   const [postTitle, setPostTitle] = useState("");
+  const [resourceType, setResourceType] = useState("notes");
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [processingStatus, setProcessingStatus] = useState({
     summary: null,
-    examQuestions: null
+    examQuestions: null,
+    pyqSolutions: null
   });
 
   useEffect(() => {
@@ -33,13 +36,15 @@ export default function AIInsights() {
         
         const postData = await response.json();
         
-        // Set post title
+        // Set post title and resource type
         setPostTitle(postData.title || "AI Insights");
+        setResourceType(postData.category.resourceType || "notes");
         
         // Set processing status
         setProcessingStatus(postData.processingStatus || {
           summary: null,
-          examQuestions: null
+          examQuestions: null,
+          pyqSolutions: null
         });
         
         // Set summary data if available
@@ -50,6 +55,16 @@ export default function AIInsights() {
         // Set exam data if available
         if (postData.exam) {
           setExamData(postData.exam);
+        }
+        
+        // Set pyq data if available
+        if (postData.pyq) {
+          setPyqData(postData.pyq?.[0]);
+        }
+
+        // Set default active tab based on resource type
+        if (postData.category.resourceType.toLowerCase() === "pyq") {
+          setActiveTab("pyqSolutions");
         }
         
         setLoading(false);
@@ -88,6 +103,24 @@ export default function AIInsights() {
     });
   };
 
+  // Dynamic tabs rendering based on resource type
+  const renderTabs = () => {
+    if (resourceType.toLowerCase() === "pyq") {
+      return (
+        <TabsList className="w-full">
+          <TabsTrigger value="pyqSolutions">PYQ Solutions</TabsTrigger>
+        </TabsList>
+      );
+    } else {
+      return (
+        <TabsList className="w-full grid grid-cols-2">
+          <TabsTrigger value="summary">Summary</TabsTrigger>
+          <TabsTrigger value="exam">Exam Prep</TabsTrigger>
+        </TabsList>
+      );
+    }
+  };
+
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="flex items-center justify-between mb-6">
@@ -109,16 +142,13 @@ export default function AIInsights() {
       ) : (
         <div className="border rounded-lg shadow-lg">
           <Tabs 
-            defaultValue="summary" 
+            defaultValue={resourceType.toLowerCase() === "pyq" ? "pyqSolutions" : "summary"}
             value={activeTab} 
             onValueChange={setActiveTab}
             className="w-full"
           >
             <div className="border-b">
-              <TabsList className="w-full grid grid-cols-2">
-                <TabsTrigger value="summary">Summary</TabsTrigger>
-                <TabsTrigger value="exam">Exam Prep</TabsTrigger>
-              </TabsList>
+              {renderTabs()}
             </div>
             
             <div className="p-6">
@@ -269,6 +299,116 @@ export default function AIInsights() {
                         )}
                       </div>
                     ))}
+                  </div>
+                )}
+              </TabsContent>
+              
+              <TabsContent value="pyqSolutions" className="space-y-6 mt-0">
+                {processingStatus?.pyqSolutions === "processing" && (
+                  <div className="p-4 border rounded-md">
+                    <div className="flex items-center justify-center space-x-2 py-8">
+                      <div className="h-4 w-4 bg-blue-600 rounded-full animate-pulse"></div>
+                      <div className="h-4 w-4 bg-blue-600 rounded-full animate-pulse delay-75"></div>
+                      <div className="h-4 w-4 bg-blue-600 rounded-full animate-pulse delay-150"></div>
+                      <p className="text-blue-600 font-medium">Processing PYQ solutions...</p>
+                    </div>
+                  </div>
+                )}
+                
+                {processingStatus?.pyqSolutions === "failed" && (
+                  <div className="p-4 border border-red-200 rounded-md">
+                    <div className="flex items-center justify-center py-8">
+                      <svg className="w-6 h-6 text-red-800 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <p className="text-red-800 font-medium">Failed to process PYQ solutions</p>
+                    </div>
+                  </div>
+                )}
+                
+                {pyqData && processingStatus?.pyqSolutions === "completed" && (
+                  <div className="space-y-4">
+                    {pyqData.academicYear && (
+                      <div className="mb-6">
+                        <h3 className="text-xl font-semibold">Academic Year: {pyqData.academicYear}</h3>
+                      </div>
+                    )}
+                    
+                    {pyqData.solutions && pyqData.solutions.length > 0 && (
+                      <div className="space-y-8">
+                        {pyqData.solutions.map((solution, index) => (
+                          <div key={index} className="p-6 border rounded-lg">
+                            <div className="mb-4">
+                              <div className="flex justify-between items-start">
+                                <h4 className="font-medium text-lg mb-2">
+                                  Question {solution.questionNumber || index + 1}
+                                  {solution.marks && <span className="ml-2 text-sm bg-blue-800 text-blue-200 px-2 py-1 rounded-full">{solution.marks} marks</span>}
+                                </h4>
+                              </div>
+                              <p className="text-gray-300 mb-4">{solution.questionText}</p>
+                            </div>
+                            
+                            <div className="space-y-4">
+                              <h4 className="font-medium text-lg mb-2">Solution</h4>
+                              
+                              {solution.solution?.introduction && (
+                                <div className="mb-4">
+                                  <h5 className="font-medium text-gray-500 mb-1">Introduction</h5>
+                                  <p>{solution.solution.introduction}</p>
+                                </div>
+                              )}
+                              
+                              {solution.solution?.keyConcepts && solution.solution.keyConcepts.length > 0 && (
+                                <div className="mb-4">
+                                  <h5 className="font-medium text-gray-500 mb-1">Key Concepts</h5>
+                                  <ul className="list-disc pl-5">
+                                    {solution.solution.keyConcepts.map((concept, idx) => (
+                                      <li key={idx} className="mb-1">{concept}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                              
+                              {solution.solution?.mainContent && (
+                                <div className="mb-4">
+                                  <h5 className="font-medium text-gray-500 mb-1">Answer</h5>
+                                  <p className="whitespace-pre-line">{solution.solution.mainContent}</p>
+                                </div>
+                              )}
+                              
+                              {solution.solution?.examples && solution.solution.examples.length > 0 && (
+                                <div className="mb-4">
+                                  <h5 className="font-medium text-gray-500 mb-1">Examples</h5>
+                                  <ul className="list-disc pl-5">
+                                    {solution.solution.examples.map((example, idx) => (
+                                      <li key={idx} className="mb-1">{example}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                              
+                              {solution.solution?.conclusion && (
+                                <div className="mb-4">
+                                  <h5 className="font-medium text-gray-500 mb-1">Conclusion</h5>
+                                  <p>{solution.solution.conclusion}</p>
+                                </div>
+                              )}
+                              
+                              {solution.solution?.tips && solution.solution.tips.length > 0 && (
+                                <div>
+                                  <h5 className="font-medium text-gray-500 mb-1">Tips</h5>
+                                  <ul className="list-disc pl-5">
+                                    {solution.solution.tips.map((tip, idx) => (
+                                      <li key={idx} className="mb-1">{tip}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </TabsContent>
